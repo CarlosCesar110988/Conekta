@@ -12,8 +12,11 @@ WHMCS V 5.2 o superior
 Instrucciones:
 
 1.- Sube por FTP en la ruta de la instalación de WHMCS la carpeta "modules"
+
 2.- Configura la pasarela de pago en el portal de admin del WHMCS
+
 3.- Realiza un par de pruebas en entorno testing
+
 4.- Disfruta
 
 
