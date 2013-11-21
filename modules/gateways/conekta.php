@@ -1,5 +1,10 @@
 <?php
 
+// Desarrollo por Carlos Cesar Peña Gomez
+// CarlosCesar110988@gmail.com
+// twitter @carlirox
+
+
 function conekta_config() {
     $configarray = array(
      "FriendlyName" => array("Type" => "System", "Value"=>"Conekta Visa/MasterCard"),
@@ -42,7 +47,7 @@ function conekta_capture($params) {
 	
 	$results = array();
 	
-	// Preparamos todos los parametros para enviar la peticion a Conekta.io
+	// Preparamos todos los parametros para enviar a Conekta.io
 	
 	$card_num 			= $cardnumber;
 	$card_cvv			= $cardissuenum;
@@ -69,15 +74,16 @@ function conekta_capture($params) {
 					);
 	try {
 	
-	  $conekta = array(
-	  											'card' 				=> $card, 
-	  											'description' 		=> $data_description, 
-	  											'amount' 			=> intval($data_amount), 
-	  											'currency'			=> $data_currency
-	  									);
+	$conekta = array(
+	  					'card' 			=> $card, 
+	  					'description' 	=> $data_description, 
+	  					'amount' 		=> intval($data_amount), 
+	  					'currency'		=> $data_currency
+	  				);
 	
 	  $charge = Conekta_Charge::create($conekta);
-	  // Todo Correcto
+	  
+	  // Cargo Correcto
 	  $data 				= json_decode($charge);;
 	  $results["status"] 	= "success";
 	  $results["transid"] 	= $data->payment_method->auth_code;
@@ -88,7 +94,7 @@ function conekta_capture($params) {
 	
 	catch (Exception $e) 
 	{
-	  // Ocurrio Un error
+	  // Ocurrio un error
 	  $results["status"] 	= "declined";
 	  $results["transid"] 	= $data->payment_method->auth_code;
 	  $results['data'] 		= $e->getMessage().'-->'.json_encode($conekta);
