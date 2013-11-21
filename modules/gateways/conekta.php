@@ -18,47 +18,57 @@
 
 function conekta_config() {
     $configarray = array(
-     "FriendlyName" => array("Type" => "System", "Value"=>"Conekta Visa/MasterCard"),
-     "private_key" => array("FriendlyName" => "Llave Privada", "Type" => "text", "Size" => “50”, ),
-     "instructions" => array("FriendlyName" => "Instrucciones de pago", "Type" => "textarea", "Rows" => "5", "Description" => "", ),
+     						'FriendlyName' 	=> array(
+     													'Type' 			=>'System', 
+     													'Value'			=>'Conekta Visa/MasterCard'
+     												),
+	 						'private_key' 	=> array(
+	 													'FriendlyName' 	=> 'Llave Privada', 
+	 													'Type' 			=> 'text', 
+	 													'Size' 			=> '50'
+	 												),
+	 						'instructions' 	=> array(
+	 													'FriendlyName' 	=> 'Instrucciones de pago', 
+	 													'Type' 			=> 'textarea', 
+	 													'Rows' 			=> '5', 
+	 													'Description' 	=> ''
+	 												)
     );
 	return $configarray;
 }
 
 function conekta_capture($params) {
 
-    # Gateway Specific Variables
-	$public_key = $params['public_key'];
-	$private_key = $params['private_key'];
+    # Variables de Conekta
+	$private_key 	= $params['private_key'];
 
-    # Invoice Variables
-	$invoiceid = $params['invoiceid'];
-	$amount = $params['amount']; # Format: ##.##
-    $currency = $params['currency']; # Currency Code
+    # Variables de la Factura
+	$invoiceid 		= $params['invoiceid'];
+	$amount 		= $params['amount']; # Format: ##.##
+    $currency 		= $params['currency']; # Currency Code
 
-    # Client Variables
-	$firstname = $params['clientdetails']['firstname'];
-	$lastname = $params['clientdetails']['lastname'];
-	$email = $params['clientdetails']['email'];
-	$address1 = $params['clientdetails']['address1'];
-	$address2 = $params['clientdetails']['address2'];
-	$city = $params['clientdetails']['city'];
-	$state = $params['clientdetails']['state'];
-	$postcode = $params['clientdetails']['postcode'];
-	$country = $params['clientdetails']['country'];
-	$phone = $params['clientdetails']['phonenumber'];
+    # Variables del cliente
+	$firstname 		= $params['clientdetails']['firstname'];
+	$lastname 		= $params['clientdetails']['lastname'];
+	$email 			= $params['clientdetails']['email'];
+	$address1 		= $params['clientdetails']['address1'];
+	$address2 		= $params['clientdetails']['address2'];
+	$city 			= $params['clientdetails']['city'];
+	$state 			= $params['clientdetails']['state'];
+	$postcode 		= $params['clientdetails']['postcode'];
+	$country 		= $params['clientdetails']['country'];
+	$phone 			= $params['clientdetails']['phonenumber'];
 
-	# Card Details
-	$cardtype = $params['cardtype'];
-	$cardnumber = $params['cardnum'];
-	$cardexpiry = $params['cardexp']; # Format: MMYY
-	$cardstart = $params['cardstart']; # Format: MMYY
-	$cardissuenum = $params['cccvv'];
-	
+	# Informacion de la Tarjeta
+	$cardtype 		= $params['cardtype'];
+	$cardnumber 	= $params['cardnum'];
+	$cardexpiry 	= $params['cardexp']; # Format: MMYY
+	$cardstart 		= $params['cardstart']; # Format: MMYY
+	$cardissuenum 	= $params['cccvv'];
 	
 	$results = array();
 	
-	// Preparamos todos los parametros para enviar a Conekta.io
+	# Preparamos todos los parametros para enviar a Conekta.io
 	
 	$card_num 			= $cardnumber;
 	$card_cvv			= $cardissuenum;
@@ -70,31 +80,35 @@ function conekta_capture($params) {
 	$data_currency		= strtolower($currency);
 	$data_description	= 'Pago Factura No. '.$invoiceid;
 	
-	// Procesamos solicitud
+	# Incluimos la libreria de Conecta
 	
 	require_once('conekta/lib/Conekta.php');
 	
+	# Creamos el Objeto de Cargo
+	
 	Conekta::setApiKey($private_key);
 	
+	# Arraglo con informacion de tarjeta
 	$card = array(
 						'number' 		=> $card_num, 
 						'exp_month' 	=> intval($card_exp_month), 
 						'exp_year' 		=> intval('20'.$card_exp_year), 
 						'cvc' 			=> intval($card_cvv), 
 						'name' 			=> $card_name
-					);
+				);
 	try {
 	
+	# Arraglo con informacion del cargo
 	$conekta = array(
 	  					'card' 			=> $card, 
 	  					'description' 	=> $data_description, 
 	  					'amount' 		=> intval($data_amount), 
 	  					'currency'		=> $data_currency
-	  				);
+	  			);
 	
 	  $charge = Conekta_Charge::create($conekta);
 	  
-	  // Cargo Correcto
+	  // Transaccion Correcta
 	  $data 				= json_decode($charge);;
 	  $results["status"] 	= "success";
 	  $results["transid"] 	= $data->payment_method->auth_code;
@@ -105,14 +119,14 @@ function conekta_capture($params) {
 	
 	catch (Exception $e) 
 	{
-	  // Ocurrio un error
+	  // Transaccion Declinada
 	  $results["status"] 	= "declined";
 	  $results["transid"] 	= $data->payment_method->auth_code;
-	  $results['data'] 		= $e->getMessage().'-->'.json_encode($conekta);
+	  $results['data'] 		= $e->getMessage();
 	}
 
 	
-	# Return Results
+	# Validamos los resultados
 	if ($results["status"]=="success") {
 		return array("status"=>"success","transid"=>$results["transid"],"rawdata"=>'OK');
 	} elseif ($gatewayresult=="declined") {
