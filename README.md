@@ -1,4 +1,4 @@
-Conekta Beta 1.0
+Conekta Beta 1.0 WHMCS
 =======
 
 Conekta - Pagos con Tarjeta
