@@ -15,7 +15,6 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE 
 // USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
 function conekta_config() {
     $configarray = array(
 		'FriendlyName' => array(
@@ -102,8 +101,8 @@ function conekta_capture($params) {
 				);
 	try {
 	
-	# Arraglo con informacion del cargo
-	$conekta = array(
+	  # Arraglo con informacion del cargo
+	  $conekta = array(
 	  					'card' => $card, 
 	  					'description' => $data_description, 
 	  					'amount' => intval($data_amount), 
@@ -113,13 +112,11 @@ function conekta_capture($params) {
 	  $charge = Conekta_Charge::create($conekta);
 	  
 	  # Transaccion Correcta
-	  $data = json_decode($charge);;
+	  $data = json_decode($charge);
 	  $results['status'] = 'success';
 	  $results['transid'] = $data->payment_method->auth_code;
 	  $results['data'] = 'OK';
-
 	} 
-	
 	
 	catch (Exception $e) 
 	{
@@ -129,7 +126,6 @@ function conekta_capture($params) {
 	  $results['data'] = $e->getMessage();
 	}
 
-	
 	# Validamos los resultados
 	if ($results['status']=='success') {
 		return array('status'=>'success','transid'=>$results['transid'],'rawdata'=>'OK');
@@ -138,7 +134,6 @@ function conekta_capture($params) {
     } else {
 		return array('status'=>'error','rawdata'=>$results);
 	}
-
 }
 
 ?>
