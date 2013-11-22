@@ -37,6 +37,7 @@ function conekta_config() {
 	return $configarray;
 }
 
+
 function conekta_capture($params) {
 
     # Variables de Conekta
@@ -94,7 +95,14 @@ function conekta_capture($params) {
 						'exp_month' 	=> intval($card_exp_month), 
 						'exp_year' 		=> intval('20'.$card_exp_year), 
 						'cvc' 			=> intval($card_cvv), 
-						'name' 			=> $card_name
+						'name' 			=> $card_name,
+						'address'		=> array(
+											      'street1'	=> $address1,
+											      'city'	=> $city,
+											      'state'	=> $state,
+											      'zip'		=> $postcode,
+											      'country'	=> $country
+											    )
 				);
 	try {
 	
