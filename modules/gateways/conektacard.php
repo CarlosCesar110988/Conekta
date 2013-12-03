@@ -15,7 +15,7 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE 
 // USE OR PERFORMANCE OF THIS SOFTWARE.
 
-function conekta_config() {
+function conektacard_config() {
     $configarray = array(
 		'FriendlyName' => array(
 			'Type' =>'System', 
@@ -37,7 +37,7 @@ function conekta_config() {
 }
 
 
-function conekta_capture($params) {
+function conektacard_capture($params) {
 
     # Variables de Conekta
 	$private_key = $params['private_key'];
