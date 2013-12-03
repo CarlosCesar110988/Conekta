@@ -1,7 +1,9 @@
-Conekta Beta 1.0 WHMCS
+Conekta  1.1 WHMCS
 =======
 
 Conekta - Pagos con Tarjeta
+Conekta - Pagos en Tiendas OXXO
+Conekta - Pagos Banco Banorte
 
 Modulo para procesar tarjetas de crédito y debito Visa/MasterCard desde portal de WHMCS.
 
