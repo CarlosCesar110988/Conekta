@@ -1,9 +1,10 @@
-Conekta  1.1 WHMCS
+Conekta  1.2 WHMCS
 =======
 
 Conekta - Pagos con Tarjeta
-Conekta - Pagos en Tiendas OXXO
-Conekta - Pagos Banco Banorte
+Conekta - Pagos en Tiendas OXXO + WebHooks
+Conekta - Pagos Banco Banorte + WebHooks
+
 
 Modulo para procesar tarjetas de crédito y debito Visa/MasterCard desde portal de WHMCS.
 
@@ -15,11 +16,17 @@ Instrucciones:
 
 1.- Sube por FTP en la ruta de la instalación de WHMCS la carpeta "modules"
 
-2.- Configura la pasarela de pago en el portal de admin del WHMCS
+2.- Configurar la pasarela de pago en el portal de admin del WHMCS
 
-3.- Realiza un par de pruebas en entorno testing
+3.- Configurar WebHooks en el portal de Conekta.io
+    
+      - http://www.misitio.com/whmcs/modules/gateways/callback/conektabanorte.php
+      
+      - http://www.misitio.com/whmcs/modules/gateways/callback/conektaoxxo.php
 
-4.- Disfruta
+4.- Realiza un par de pruebas en entorno testing
+
+5.- Disfruta
 
 
 =======
