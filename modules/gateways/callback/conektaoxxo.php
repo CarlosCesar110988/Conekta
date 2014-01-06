@@ -21,29 +21,64 @@ include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
 
-$gatewaymodule = "template"; # Enter your gateway module name here replacing template
+$gatewaymodule = "conektaoxxo"; # Enter your gateway module name here replacing template
 
 $GATEWAY = getGatewayVariables($gatewaymodule);
-if (!$GATEWAY["type"]) die("Module Not Activated"); # Checks gateway module is active before accepting callback
+if (!$GATEWAY["type"])
+{
+	die("Module Not Activated");
+} # Checks gateway module is active before accepting callback
 
-# Get Returned Variables - Adjust for Post Variable Names from your Gateway's Documentation
-$status = $_POST["x_response_code"];
-$invoiceid = $_POST["x_invoice_num"];
-$transid = $_POST["x_trans_id"];
-$amount = $_POST["x_amount"];
-$fee = $_POST["x_fee"];
+// Webhook
 
-$invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
+$result 			= @file_get_contents('php://input');
 
-checkCbTransID($transid); # Checks transaction number isn't already in the database and ends processing if it does
+$json 				= json_decode($result);
+$json 				= $json->data->object;
 
-if ($status=="1") {
-    # Successful
-    addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule); # Apply Payment to Invoice: invoiceid, transactionid, amount paid, fees, modulename
-	logTransaction($GATEWAY["name"],$_POST,"Successful"); # Save to Gateway Log: name, data array, status
-} else {
-	# Unsuccessful
-    logTransaction($GATEWAY["name"],$_POST,"Unsuccessful"); # Save to Gateway Log: name, data array, status
+$invoiceid 			= $json->reference_id;
+$fee 				= $json->fee;
+$amount 			= $json->amount;
+$status				= $json->status;
+$transid 			= $json->id;
+
+// Validamos que el IPN sea de Banorte
+if($json->payment_method->type=='oxxo')
+
+{
+	// Guardar Log de webhook (comentar esto para no guardar logs)
+	$fp = fopen('conekta_logs/oxxo_'.md5(uniqid()).".txt","wb");
+	fwrite($fp,$result);
+	fclose($fp);
+	
+	// Convertimos montos con decimales
+	$amount_2 			= substr($amount, 0, -2);
+	$decimals_2 		= substr($amount, strlen($amount_2), strlen($amount));
+	$amount				= $amount_2.'.'.$decimals_2;
+	
+	$amount_3 			= substr($fee, 0, -2);
+	$decimals_3 		= substr($fee, strlen($amount_3), strlen($fee));
+	$fee				= $amount_3.'.'.$decimals_3;
+	
+	$invoiceid 			= str_replace('factura_', '', $invoiceid);
+	
+	if($status=='paid'){$status=1;}else{$status=0;}
+	
+	$invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
+	
+	checkCbTransID($transid); # Checks transaction number isn't already in the database and ends processing if it does
+	
+	if ($status=="1") {
+	    # Successful
+	    addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule); # Apply Payment to Invoice: invoiceid, transactionid, amount paid, fees, modulename
+		logTransaction($GATEWAY["name"],$result,"Successful"); # Save to Gateway Log: name, data array, status
+	} else {
+		# Unsuccessful
+	    logTransaction($GATEWAY["name"],$result,"Unsuccessful"); # Save to Gateway Log: name, data array, status
+	}
 }
+
+
+header("HTTP/1.0 200");
 
 ?>

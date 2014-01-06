@@ -79,7 +79,7 @@ function conektabanorte_link($params) {
 	# Arraglo con informacion de tarjeta
 	$conekta = array(
 				'description' => $data_description, 
-				'reference_id' => 'kwk_'.$invoiceid, 
+				'reference_id' => 'factura_'.$invoiceid, 
 				'amount' => intval($data_amount), 
 				'currency' => $data_currency, 
 				'bank' => array('type'=>'banorte')

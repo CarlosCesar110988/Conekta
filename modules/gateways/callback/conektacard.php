@@ -21,7 +21,7 @@ include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
 
-$gatewaymodule = "template"; # Enter your gateway module name here replacing template
+$gatewaymodule = "conektacard"; # Enter your gateway module name here replacing template
 
 $GATEWAY = getGatewayVariables($gatewaymodule);
 if (!$GATEWAY["type"]) die("Module Not Activated"); # Checks gateway module is active before accepting callback
